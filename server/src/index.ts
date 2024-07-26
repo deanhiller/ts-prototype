@@ -2,6 +2,10 @@
   import express, { Express, Request, Response } from "express";
   import path from "path";
   import cors from "cors";
+  import {myContainer} from "./inversify.config";
+  import {BaseController} from "./controllers/baseController";
+  import {TYPES} from "./types";
+  import {LoginRequest, User} from "./apis/base/base";
 
   dotenv.config();
 
@@ -35,8 +39,20 @@
     }
   ];
 
+  const baseController = myContainer.get<BaseController>(TYPES.BaseController);
+
+  console.log("starting");
+
   // route login
   app.post('/login', (req: Request, res: Response) => {
+    console.log("log stuff");
+
+    const loginReq = new LoginRequest();
+    loginReq.user = new User();
+    loginReq.user._name = "dean";
+    loginReq.user._password = "pass";
+    baseController.login(loginReq);
+
     const { email, password }:FormInputs = req.body;
 
     const user = users.find(user => {
