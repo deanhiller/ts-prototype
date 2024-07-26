@@ -42,12 +42,12 @@
       try {
         // make the API call
         const res:User = await getData(
-          'http://localhost:8000/login', email, password
+          'http://localhost:8080/login', email, password
         )
         setUser(res);
         resetFormFields()
       } catch (error) {
-        alert('User Sign In Failed');
+        alert('User Sign In Failed.'+error);
       }
     };
 
