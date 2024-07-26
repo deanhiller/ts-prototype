@@ -9,5 +9,3 @@ cd ../
 cd client
 npm install
 npm run build
-
-docker buildx build .
