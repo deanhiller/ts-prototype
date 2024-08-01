@@ -1,6 +1,6 @@
   import { useState, ChangeEvent, FormEvent } from "react";
   import { ReactComponent as Logo } from "./logo.svg";
-  import {baseClient, getData} from "./utils/data-utils";
+  import {baseClient} from "./utils/data-utils";
   import FormInput from './components/form-input/form-input';
 
   import './App.css';
