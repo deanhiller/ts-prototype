@@ -13,6 +13,8 @@ export class User {
 }
 
 export interface BaseApi {
-    login(loginRequest: LoginRequest): LoginResponse;
+    //@Path("/login")
+    login(loginRequest: LoginRequest): Promise<LoginResponse>;
+
 }
 

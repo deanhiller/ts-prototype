@@ -1,3 +1,4 @@
+import Path from "../util/decorators"
 
 export class LoginResponse {
     public loginSuccess?: boolean;
@@ -13,6 +14,8 @@ export class User {
 }
 
 export interface BaseApi {
-    login(loginRequest: LoginRequest): LoginResponse;
+    //@Path("/login")
+    login(loginRequest: LoginRequest): Promise<LoginResponse>;
+
 }
 

@@ -1,6 +1,6 @@
   import { useState, ChangeEvent, FormEvent } from "react";
   import { ReactComponent as Logo } from "./logo.svg";
-  import { getData } from "./utils/data-utils";
+  import {baseClient, getData} from "./utils/data-utils";
   import FormInput from './components/form-input/form-input';
 
   import './App.css';
@@ -46,10 +46,19 @@
         loginReq.user.password = password;
         loginReq.user.name = email;
 
-        // make the API call
-        const res:UserState = await getData(
-          'http://localhost:8080/login', loginReq
-        )
+        const loginResponse = await baseClient.login(loginReq);
+        if(!loginResponse.loginSuccess) {
+          //if network exception thrown, it shows different error
+          throw new Error("Incorrect username/password combination");
+        }
+
+        const res: UserState = {
+          id: 1,
+          name: email,
+          email: email,
+          password: 'notAgoodIdeaToPutHere'
+        };
+
         setUser(res);
         resetFormFields()
       } catch (error) {

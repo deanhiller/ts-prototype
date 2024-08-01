@@ -1,13 +1,25 @@
 import "reflect-metadata";
-import {provide} from "inversify-binding-decorators";
+import { PrismaClient } from "@prisma/client";
+import { PrismaClientFactory } from "./prismaClientFactory"
+import {provideSingleton} from "../util/decorators";
 
-@provide(BaseBusinessLogic)
+@provideSingleton(BaseBusinessLogic)
 class BaseBusinessLogic {
+    private prisma: PrismaClient;
+
     public constructor(
+        prismaFactory: PrismaClientFactory
     ) {
+        this.prisma = prismaFactory.fetch();
     }
 
-    public sneak() { return "deano" }
+    public async sneak(): Promise<string> {
+
+        const allUsers = await this.prisma.user.findMany()
+        console.log(allUsers)
+
+        return "deano"
+    }
 
 }
 

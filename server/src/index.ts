@@ -26,52 +26,21 @@
     password: string
   }
 
-  // Array of example users for testing purposes
-  const users = [
-    {
-      id: 1,
-      name: 'Maria Doe',
-      email: 'maria@example.com',
-      password: 'maria123'
-    },
-    {
-      id: 2,
-      name: 'Juan Doe',
-      email: 'juan@example.com',
-      password: 'juan123'
-    }
-  ];
+
 
   const baseController = myContainer.get<BaseController>(TYPES.BaseController);
 
   console.log("starting");
 
-  function throwError<T>(msg: string): T {
-    throw Error(msg);
-  }
+
 
   // route login
   app.post('/login', async (req: Request, res: Response) => {
     console.log("log stuff");
-
-    const allUsers = await prisma.user.findMany()
-    console.log(allUsers)
-
     const loginReq: LoginRequest = Object.assign(new LoginRequest(), req.body);
-    const email = loginReq.user?.name ?? throwError<string>("email is required");
-    const password = loginReq.user?.password ?? throwError<string>("password is required");
-
-    baseController.login(loginReq);
-
-    const user = users.find(user => {
-      return user.email === email && user.password === password
-    });
-
-    if (!user) {
-      return res.status(404).send('User Not Found!')
-    }
-
-    return res.status(200).json(user)
+    const result = await baseController.login(loginReq);
+    const body = JSON.stringify(result);
+    return res.status(200).send(body);
   });
 
   app.use(express.static("../client/build"));
