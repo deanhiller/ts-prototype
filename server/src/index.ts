@@ -6,8 +6,11 @@
   import {BaseController} from "./controllers/baseController";
   import {TYPES} from "./types";
   import {LoginRequest, User} from "./apis/base/base";
+  import { PrismaClient } from '@prisma/client'
 
   dotenv.config();
+
+  const prisma = new PrismaClient()
 
   const app: Express = express();
 
@@ -44,8 +47,11 @@
   console.log("starting");
 
   // route login
-  app.post('/login', (req: Request, res: Response) => {
+  app.post('/login', async (req: Request, res: Response) => {
     console.log("log stuff");
+
+    const allUsers = await prisma.user.findMany()
+    console.log(allUsers)
 
     const loginReq = new LoginRequest();
     loginReq.user = new User();
