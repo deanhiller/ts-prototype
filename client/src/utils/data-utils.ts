@@ -1,7 +1,8 @@
-  export const getData = async <T>(
+import {LoginRequest} from "../apis/base/base";
+
+export const getData = async <T>(
     url: string,
-    email: string,
-    password: string
+    loginReq: LoginRequest
   )
   : Promise<T> => {
     const res = await fetch(url, {
@@ -9,7 +10,7 @@
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify(loginReq)
     });
 
     return await res.json();

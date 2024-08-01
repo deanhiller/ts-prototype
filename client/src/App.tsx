@@ -4,9 +4,10 @@
   import FormInput from './components/form-input/form-input';
 
   import './App.css';
+  import {LoginRequest, User} from "./apis/base/base";
 
   // TypeScript declarations
-  type User = {
+  type UserState = {
     id: number,
     name: string,
     email: string,
@@ -20,7 +21,7 @@
 
   const App = () => {
     // react hooks
-    const [user, setUser] = useState<User | null>()
+    const [user, setUser] = useState<UserState | null>()
     const [formFields, setFormFields] = useState(defaultFormFields)
     const { email, password } = formFields
 
@@ -40,9 +41,14 @@
       event.preventDefault()
 
       try {
+        const loginReq = new LoginRequest();
+        loginReq.user = new User();
+        loginReq.user.password = password;
+        loginReq.user.name = email;
+
         // make the API call
-        const res:User = await getData(
-          'http://localhost:8080/login', email, password
+        const res:UserState = await getData(
+          'http://localhost:8080/login', loginReq
         )
         setUser(res);
         resetFormFields()

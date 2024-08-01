@@ -46,6 +46,10 @@
 
   console.log("starting");
 
+  function throwError<T>(msg: string): T {
+    throw Error(msg);
+  }
+
   // route login
   app.post('/login', async (req: Request, res: Response) => {
     console.log("log stuff");
@@ -53,13 +57,11 @@
     const allUsers = await prisma.user.findMany()
     console.log(allUsers)
 
-    const loginReq = new LoginRequest();
-    loginReq.user = new User();
-    loginReq.user._name = "dean";
-    loginReq.user._password = "pass";
-    baseController.login(loginReq);
+    const loginReq: LoginRequest = Object.assign(new LoginRequest(), req.body);
+    const email = loginReq.user?.name ?? throwError<string>("email is required");
+    const password = loginReq.user?.password ?? throwError<string>("password is required");
 
-    const { email, password }:FormInputs = req.body;
+    baseController.login(loginReq);
 
     const user = users.find(user => {
       return user.email === email && user.password === password
