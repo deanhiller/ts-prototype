@@ -4,9 +4,6 @@ import {BaseApi, LoginRequest, LoginResponse} from "../apis/base/base";
 import {TYPES} from "../types";
 import {BaseBusinessLogic} from "./baseBusinessLogic";
 import {RemoteApi} from "../apis/remote/remote";
-import {provide} from "inversify-binding-decorators";
-import {PrismaClientFactory} from "./prismaClientFactory";
-import {PrismaClient} from "@prisma/client";
 import {provideSingleton} from "../util/decorators";
 
 // Array of example users for testing purposes

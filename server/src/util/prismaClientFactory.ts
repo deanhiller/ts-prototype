@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {PrismaClient} from "@prisma/client";
-import {provideSingleton} from "../util/decorators";
+import {provideSingleton} from "./decorators";
 
 @provideSingleton(PrismaClientFactory)
 export class PrismaClientFactory {

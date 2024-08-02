@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { PrismaClient } from "@prisma/client";
-import { PrismaClientFactory } from "./prismaClientFactory"
+import { PrismaClientFactory } from "../util/prismaClientFactory"
 import {provideSingleton} from "../util/decorators";
 
 @provideSingleton(BaseBusinessLogic)
