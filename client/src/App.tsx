@@ -78,7 +78,7 @@
         </h1>
         <div className="card">
           <Logo className="logo" />
-          <h2>Sign In2</h2>
+          <h2>Sign In3</h2>
           <form onSubmit={handleSubmit}>
             <FormInput
               label="Email"

@@ -19,6 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "dev": "npx nodemon --watch src --ext ts,js,tsx,css --exec \"npm run build\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
