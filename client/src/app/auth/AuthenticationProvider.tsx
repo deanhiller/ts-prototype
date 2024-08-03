@@ -2,9 +2,7 @@ import React, { createContext, useCallback, useMemo, useState } from 'react';
 import { PartialDeep } from 'type-fest';
 import { User } from './user';
 import Authentication from './Authentication';
-import AWSAuthProvider from './services/aws/AWSAuthProvider';
 import JwtAuthProvider from './services/jwt/JwtAuthProvider';
-import FirebaseAuthProvider from './services/firebase/FirebaseAuthProvider';
 
 export type SignInPayload = {
 	email: string;
@@ -80,11 +78,7 @@ function AuthenticationProvider(props: AuthenticationProviderProps) {
 	return (
 		<AuthContext.Provider value={contextValue}>
 			<JwtAuthProvider>
-				<AWSAuthProvider>
-					<FirebaseAuthProvider>
-						<Authentication>{children}</Authentication>
-					</FirebaseAuthProvider>
-				</AWSAuthProvider>
+				<Authentication>{children}</Authentication>
 			</JwtAuthProvider>
 		</AuthContext.Provider>
 	);

@@ -9,8 +9,6 @@ import Tab from '@mui/material/Tab';
 import { useState } from 'react';
 import _ from '../../../@lodash/@lodash';
 import JwtSignUpTab from './tabs/JwSignUpTab';
-import FirebaseSignUpTab from './tabs/FirebaseSignUpTab';
-import AwsSignUpTab from './tabs/AwsSignUpTab';
 
 const tabs = [
 	{
@@ -18,18 +16,6 @@ const tabs = [
 		title: 'JWT',
 		logo: 'assets/images/logo/jwt.svg',
 		logoClass: 'h-40 p-4 bg-black rounded-12'
-	},
-	{
-		id: 'firebase',
-		title: 'Firebase',
-		logo: 'assets/images/logo/firebase.svg',
-		logoClass: 'h-40'
-	},
-	{
-		id: 'aws',
-		title: 'AWS',
-		logo: 'assets/images/logo/aws-amplify.svg',
-		logoClass: 'h-40'
 	}
 ];
 
@@ -90,8 +76,6 @@ function SignUpPage() {
 					</Tabs>
 
 					{selectedTabId === 'jwt' && <JwtSignUpTab />}
-					{selectedTabId === 'firebase' && <FirebaseSignUpTab />}
-					{selectedTabId === 'aws' && <AwsSignUpTab />}
 				</div>
 			</Paper>
 

@@ -11,8 +11,6 @@ import CardContent from '@mui/material/CardContent';
 import _ from '@lodash';
 import Alert from '@mui/material/Alert';
 import JwtLoginTab from './tabs/JwtSignInTab';
-import FirebaseSignInTab from './tabs/FirebaseSignInTab';
-import AwsSignInTab from './tabs/AwsSignInTab';
 
 const tabs = [
 	{
@@ -20,18 +18,6 @@ const tabs = [
 		title: 'JWT',
 		logo: 'assets/images/logo/jwt.svg',
 		logoClass: 'h-40 p-4 bg-black rounded-12'
-	},
-	{
-		id: 'firebase',
-		title: 'Firebase',
-		logo: 'assets/images/logo/firebase.svg',
-		logoClass: 'h-40'
-	},
-	{
-		id: 'aws',
-		title: 'AWS',
-		logo: 'assets/images/logo/aws-amplify.svg',
-		logoClass: 'h-40'
 	}
 ];
 
@@ -101,8 +87,6 @@ function SignInPage() {
 					</Tabs>
 
 					{selectedTabId === 'jwt' && <JwtLoginTab />}
-					{selectedTabId === 'firebase' && <FirebaseSignInTab />}
-					{selectedTabId === 'aws' && <AwsSignInTab />}
 				</CardContent>
 			</Paper>
 
