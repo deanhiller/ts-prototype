@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from 'app/store/hooks';
 import FuseSplashScreen from '@fuse/core/FuseSplashScreen/FuseSplashScreen';
 import { resetUser, selectUserRole, setUser } from './user/store/userSlice';
 import useAuth from './useAuth';
-import { User } from './user';
+import { UserData } from './user';
 import useJwtAuth from './services/jwt/useJwtAuth';
 
 type AuthenticationProps = {
@@ -81,7 +81,7 @@ function Authentication(props: AuthenticationProps) {
 	/**
 	 * Handle sign in
 	 */
-	const handleSignIn = useCallback((provider: string, userState: User) => {
+	const handleSignIn = useCallback((provider: string, userState: UserData) => {
 		dispatch(setUser(userState)).then(() => {
 			setAuthProvider(provider);
 			setIsLoading(false);

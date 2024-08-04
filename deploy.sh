@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TAG=tag1
+export TAG=latest
 
 gcloud auth configure-docker us-central1-docker.pkg.dev
 docker buildx build .

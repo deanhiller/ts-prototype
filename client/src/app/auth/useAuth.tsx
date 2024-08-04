@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import useJwtAuth from './services/jwt/useJwtAuth';
 import { AuthContext, AuthContextType } from './AuthenticationProvider';
-import { User } from './user';
+import { UserData } from './user';
 
 interface AuthProvider {
 	signOut: () => void;
-	updateUser: (user: User) => void;
+	updateUser: (user: UserData) => void;
 }
 
 type AuthProviders = {
@@ -29,7 +29,7 @@ function useAuth(): AuthContextType & { signOut: () => void } {
 		authProviders[authProvider]?.signOut();
 	};
 
-	const updateUser = (user: User) => {
+	const updateUser = (user: UserData) => {
 		const authProvider = context.getAuthProvider();
 		authProviders[authProvider]?.updateUser(user);
 	};

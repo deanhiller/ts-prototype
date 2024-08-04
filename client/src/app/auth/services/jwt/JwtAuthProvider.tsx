@@ -2,8 +2,10 @@ import React, { createContext, useState, useEffect, useCallback, useMemo } from 
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { PartialDeep } from 'type-fest';
-import { User } from '../../user';
+import { UserData } from '../../user';
 import config from './jwtAuthConfig';
+import { baseClient } from 'src/clients/base/baseClient'
+import { LoginRequest, User } from 'src/apis/base/base';
 
 export type JwtAuthStatus = 'configuring' | 'authenticated' | 'unauthenticated';
 
@@ -33,10 +35,10 @@ export type SignUpPayload = {
 };
 
 export type JwtAuthContextType = {
-	user?: User;
-	updateUser: (U: User) => void;
-	signIn?: (credentials: SignInPayload) => Promise<User | AxiosError>;
-	signUp?: (U: SignUpPayload) => Promise<User | AxiosError>;
+	user?: UserData;
+	updateUser: (U: UserData) => void;
+	signIn?: (credentials: SignInPayload) => Promise<UserData | AxiosError>;
+	signUp?: (U: SignUpPayload) => Promise<UserData | AxiosError>;
 	signOut?: () => void;
 	refreshToken?: () => void;
 	isAuthenticated: boolean;
@@ -65,7 +67,7 @@ export type JwtAuthProviderProps = {
 };
 
 function JwtAuthProvider(props: JwtAuthProviderProps) {
-	const [user, setUser] = useState<User>(null);
+	const [user, setUser] = useState<UserData>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [authStatus, setAuthStatus] = useState('configuring');
@@ -75,18 +77,19 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 	/**
 	 * Handle sign-in success
 	 */
-	const handleSignInSuccess = useCallback((userData: User, accessToken: string) => {
+	const handleSignInSuccess = useCallback((userData: UserData, accessToken: string) => {
 		setSession(accessToken);
 
 		setIsAuthenticated(true);
 
 		setUser(userData);
+		console.log("here we are. yeah");
 	}, []);
 
 	/**
 	 * Handle sign-up success
 	 */
-	const handleSignUpSuccess = useCallback((userData: User, accessToken: string) => {
+	const handleSignUpSuccess = useCallback((userData: UserData, accessToken: string) => {
 		setSession(accessToken);
 
 		setIsAuthenticated(true);
@@ -170,7 +173,7 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 				try {
 					setIsLoading(true);
 
-					const response: AxiosResponse<User> = await axios.get(config.getUserUrl, {
+					const response: AxiosResponse<UserData> = await axios.get(config.getUserUrl, {
 						headers: { Authorization: `Bearer ${accessToken}` }
 					});
 
@@ -210,14 +213,31 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 	const handleRequest = async (
 		url: string,
 		data: SignInPayload | SignUpPayload,
-		handleSuccess: (T: User, H: string) => void,
+		handleSuccess: (T: UserData, H: string) => void,
 		handleFailure: (T: AxiosError) => void
-	): Promise<User | AxiosError> => {
+	): Promise<UserData | AxiosError> => {
 		try {
-			const response: AxiosResponse<{ user: User; access_token: string }> = await axios.post(url, data);
+
+			const loginReq = new LoginRequest();
+			loginReq.user = new User();
+			loginReq.user.name = data.email;
+			loginReq.user.password = data.password;
+			const result = await baseClient.login(loginReq);
+
+			console.log("result="+result);
+			const resultUserData: UserData = {
+				uid: "tempuid",
+				role: null,
+				data: {
+					displayName: "TempDean"
+				}
+			}
+
+			const response: AxiosResponse<{ user: UserData; access_token: string }> = await axios.post(url, data);
 			const userData = response?.data?.user;
 			const accessToken = response?.data?.access_token;
 
+			console.log("here we are");
 			handleSuccess(userData, accessToken);
 
 			return userData;
@@ -253,9 +273,9 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 	/**
 	 * Update user
 	 */
-	const updateUser = useCallback(async (userData: PartialDeep<User>) => {
+	const updateUser = useCallback(async (userData: PartialDeep<UserData>) => {
 		try {
-			const response: AxiosResponse<User, PartialDeep<User>> = await axios.put(config.updateUserUrl, userData);
+			const response: AxiosResponse<UserData, PartialDeep<UserData>> = await axios.put(config.updateUserUrl, userData);
 
 			const updatedUserData = response?.data;
 

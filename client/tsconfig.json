@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    //ugh, this should be src and all ./src should be stripped in all *.ts files and
+    //below in the paths as well...
     "baseUrl": "./",
     "paths": {
       "@fuse/*": ["./src/@fuse/*"],
@@ -39,8 +41,6 @@
     "jsx": "react-jsx"
   },
   "exclude": [
-    "src/app/main/documentation/material-ui-components/components/**/*",
-    "src/app/main/documentation/material-ui-components/pages/**/*",
     "node_modules"
   ],
   "include": [

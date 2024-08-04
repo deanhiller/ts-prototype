@@ -1,4 +1,4 @@
-import { User } from 'src/app/auth/user';
+import { UserData } from 'src/app/auth/user';
 import { FuseFlatNavItemType, FuseNavItemType } from '@fuse/core/FuseNavigation/types/FuseNavItemType';
 import FuseNavItemModel from '@fuse/core/FuseNavigation/models/FuseNavItemModel';
 import _ from '@lodash';
@@ -73,7 +73,7 @@ class FuseNavigationHelper {
 		});
 	}
 
-	static filterNavigationByPermission(nav: FuseNavItemType[], userRole: User['role']): FuseNavItemType[] {
+	static filterNavigationByPermission(nav: FuseNavItemType[], userRole: UserData['role']): FuseNavItemType[] {
 		return nav.reduce((acc: FuseNavItemType[], item) => {
 			// If item has children, recursively filter them
 			const children = item.children ? this.filterNavigationByPermission(item.children, userRole) : [];
@@ -149,7 +149,7 @@ class FuseNavigationHelper {
 		return flatNavigation as FuseNavItemType[] | [];
 	}
 
-	static hasPermission(authArr: string[] | string | undefined, userRole: User['role']): boolean {
+	static hasPermission(authArr: string[] | string | undefined, userRole: UserData['role']): boolean {
 		/**
 		 * If auth array is not defined
 		 * Pass and allow

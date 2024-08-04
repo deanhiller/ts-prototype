@@ -9,16 +9,17 @@ import Utf8 from 'crypto-js/enc-utf8';
 import jwtDecode from 'jwt-decode';
 import { PartialDeep } from 'type-fest';
 import UserModel from 'src/app/auth/user/models/UserModel';
-import { User } from 'src/app/auth/user';
+import { UserData } from 'src/app/auth/user';
 import axios, { AxiosRequestConfig } from 'axios';
 import mockApi from '../mock-api.json';
 import ExtendedMockAdapter from '../ExtendedMockAdapter';
 
-type UserAuthType = User & { uid: string; password: string };
+type UserAuthType = UserData & { uid: string; password: string };
 
 let usersApi = mockApi.components.examples.auth_users.value as unknown as UserAuthType[];
 
 export const authApiMocks = (mock: ExtendedMockAdapter) => {
+
 	mock.onPost('/auth/sign-in').reply((config) => {
 		const data = JSON.parse(config.data as string) as { email: string; password: string };
 
@@ -86,7 +87,7 @@ export const authApiMocks = (mock: ExtendedMockAdapter) => {
 		return [401, { error }];
 	});
 
-	function generateAccessToken(config: AxiosRequestConfig): { access_token: string; user: User } | null {
+	function generateAccessToken(config: AxiosRequestConfig): { access_token: string; user: UserData } | null {
 		const authHeader = config.headers.Authorization as string;
 
 		if (!authHeader) {
@@ -169,7 +170,7 @@ export const authApiMocks = (mock: ExtendedMockAdapter) => {
 
 		const user = JSON.parse(config.data as string) as { user: PartialDeep<UserAuthType> };
 
-		let updatedUser: User;
+		let updatedUser: UserData;
 
 		usersApi = usersApi.map((_user) => {
 			if (uid === _user.uid) {

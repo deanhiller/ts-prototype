@@ -12,7 +12,7 @@ import _ from '@lodash';
 import useAuth from 'src/app/auth/useAuth';
 import withSlices from 'app/store/withSlices';
 import { navigationSlice, selectFlatNavigation } from './store/navigationSlice';
-import { User } from '../../../auth/user';
+import { UserData } from '../../../auth/user';
 
 type NavigationShortcutsProps = {
 	className?: string;
@@ -36,7 +36,7 @@ function NavigationShortcuts(props: NavigationShortcutsProps) {
 
 	useEffect(() => {
 		if (!isUserGuest && prevUserShortcuts && !_.isEqual(userShortcuts, prevUserShortcuts)) {
-			updateUserService(_.setIn(user, 'data.shortcuts', userShortcuts) as User);
+			updateUserService(_.setIn(user, 'data.shortcuts', userShortcuts) as UserData);
 		}
 	}, [isUserGuest, userShortcuts]);
 

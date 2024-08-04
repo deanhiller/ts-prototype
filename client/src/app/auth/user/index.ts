@@ -3,7 +3,7 @@ import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 /**
  * The type definition for a user object.
  */
-export type User = {
+export type UserData = {
 	uid: string;
 	role: string[] | string | null;
 	data: {

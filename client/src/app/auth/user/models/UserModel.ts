@@ -1,11 +1,11 @@
 import _ from '@lodash';
 import { PartialDeep } from 'type-fest';
-import { User } from 'src/app/auth/user';
+import { UserData } from 'src/app/auth/user';
 
 /**
  * Creates a new user object with the specified data.
  */
-function UserModel(data: PartialDeep<User>): User {
+function UserModel(data: PartialDeep<UserData>): UserData {
 	data = data || {};
 
 	return _.defaults(data, {

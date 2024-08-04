@@ -9,7 +9,7 @@ import _ from '@lodash';
 import SettingsPanel from 'app/theme-layouts/shared-components/configurator/SettingsPanel';
 import ThemesPanel from 'app/theme-layouts/shared-components/configurator/ThemesPanel';
 import { useAppSelector } from 'app/store/hooks';
-import { User } from 'src/app/auth/user';
+import { UserData } from 'src/app/auth/user';
 import { selectIsUserGuest, selectUser, selectUserSettings } from '../../../auth/user/store/userSlice';
 import useAuth from '../../../auth/useAuth';
 
@@ -66,7 +66,7 @@ function Configurator() {
 
 	useEffect(() => {
 		if (!isUserGuest && prevUserSettings && !_.isEqual(userSettings, prevUserSettings)) {
-			updateUser(_.setIn(user, 'data.settings', userSettings) as User);
+			updateUser(_.setIn(user, 'data.settings', userSettings) as UserData);
 		}
 	}, [isUserGuest, userSettings]);
 

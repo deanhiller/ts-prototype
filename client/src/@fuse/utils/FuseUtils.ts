@@ -2,7 +2,7 @@ import _ from '@lodash';
 import * as colors from '@mui/material/colors';
 import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 import { RouteObject } from 'react-router-dom';
-import { User } from 'src/app/auth/user';
+import { UserData } from 'src/app/auth/user';
 import EventEmitter from './EventEmitter';
 
 type TreeNode = {
@@ -350,7 +350,7 @@ class FuseUtils {
 	/**
 	 * The hasPermission function checks if a user has permission to access a resource.
 	 */
-	static hasPermission(authArr: string[] | string | undefined, userRole: User['role']): boolean {
+	static hasPermission(authArr: string[] | string | undefined, userRole: UserData['role']): boolean {
 		/**
 		 * If auth array is not defined
 		 * Pass and allow
