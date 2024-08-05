@@ -1,16 +1,16 @@
 
 
 export class ServiceRequest {
-    public user?: User;
+    public something?: Something;
 }
 
 export class ServiceResponse {
     public loginSuccess?: boolean;
 }
 
-export class User {
-    public _name?: string;
-    public _password?: string;
+export class Something {
+    public _field?: string;
+    public _something2?: string;
 }
 
 export interface RemoteApi {

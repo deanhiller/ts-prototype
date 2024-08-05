@@ -1,16 +1,19 @@
-import Path from "../util/decorators"
 
 export class LoginResponse {
     public loginSuccess?: boolean;
-}
-
-export class LoginRequest {
     public user?: User;
 }
 
-export class User {
+export class LoginRequest {
     public name?: string;
     public password?: string;
+}
+
+export class User {
+    public displayName?: string;
+    public role?: string;
+    public email?: string;
+    public photoUrl?: string;
 }
 
 export interface BaseApi {

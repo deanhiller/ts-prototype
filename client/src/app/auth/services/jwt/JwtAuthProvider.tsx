@@ -219,17 +219,17 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 		try {
 
 			const loginReq = new LoginRequest();
-			loginReq.user = new User();
-			loginReq.user.name = data.email;
-			loginReq.user.password = data.password;
+			loginReq.name = data.email;
+			loginReq.password = data.password;
 			const result = await baseClient.login(loginReq);
 
-			console.log("result="+result);
 			const resultUserData: UserData = {
-				uid: "tempuid",
-				role: null,
+				uid: result.user?.email,
+				role: result.user?.role,
 				data: {
-					displayName: "TempDean"
+					displayName: result.user?.displayName,
+					email: result.user?.email,
+					photoURL: result.user?.photoUrl
 				}
 			}
 
@@ -237,10 +237,11 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 			const userData = response?.data?.user;
 			const accessToken = response?.data?.access_token;
 
-			console.log("here we are");
-			handleSuccess(userData, accessToken);
+			console.log("their userData="+JSON.stringify(userData, null, 2));
+			console.log("our userData="+JSON.stringify(resultUserData, null, 2));
+			handleSuccess(resultUserData, accessToken);
 
-			return userData;
+			return resultUserData;
 		} catch (error) {
 			const axiosError = error as AxiosError;
 

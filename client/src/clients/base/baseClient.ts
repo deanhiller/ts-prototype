@@ -1,4 +1,5 @@
 import {BaseApi, LoginRequest, LoginResponse} from "src/apis/base/base";
+import {BadRequestError, InternalServerError, ProtocolError, UnauthorizedError} from "../../apis/util/apiUtils";
 
 const baseUrl = 'http://localhost:8080';
 
@@ -13,7 +14,23 @@ export class BaseClient implements BaseApi {
         body: JSON.stringify(loginRequest)
       });
 
-      return res.json()
+      if(res.status === 200) {
+        return res.json();
+      }
+
+      const json = await res.json();
+      const error: ProtocolError = Object.assign(new ProtocolError(), json);
+      switch (res.status) {
+        case 401:
+          throw new UnauthorizedError(error.message);
+        case 408:
+          throw new BadRequestError(error.message, error.field);
+        case 500:
+          throw new InternalServerError(error.message);
+        default:
+          throw new Error(`Missing defintion of code ${res.status} in BaseClient class(fix this first)`);
+      }
+
     }
 }
 

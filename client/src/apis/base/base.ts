@@ -5,14 +5,15 @@ export class LoginResponse {
 }
 
 export class LoginRequest {
-    //refactor to remove user and only pass in email/password!!!
-    //return user in LoginResponse which may have a lot of good info
-    public user?: User;
+    public name?: string;
+    public password?: string;
 }
 
 export class User {
-    public name?: string;
-    public password?: string;
+    public displayName?: string;
+    public role?: string;
+    public email?: string;
+    public photoUrl?: string;
 }
 
 export interface BaseApi {
