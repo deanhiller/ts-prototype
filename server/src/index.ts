@@ -21,9 +21,10 @@ setupBaseController(app, baseController)
 
 console.log(`dir:${__dirname}`);
 
-app.use(express.static("${__dirname}/../../client/build"));
+//build/fuse/browser/
+app.use(express.static("${__dirname}/../../client/build/fuse/browser"));
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "..", "client", "build", "index.html"));
+  res.sendFile(path.resolve(__dirname, "..", "..", "client", "build", "fuse", "browser", "index.html"));
 });
 
 const port = process.env.PORT || 8080;

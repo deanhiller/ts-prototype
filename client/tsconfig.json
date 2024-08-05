@@ -1,53 +1,22 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
-  "compilerOptions": {
-    //ugh, this should be src and all ./src should be stripped in all *.ts files and
-    //below in the paths as well...
-    "baseUrl": "./",
-    "sourceMap": true,
-    "paths": {
-      "@fuse/*": ["./src/@fuse/*"],
-      "@history*": ["./src/@history"],
-      "@lodash": ["./src/@lodash"],
-      "@mock-api/*": ["./src/@mock-api/*"],
-      "@schema": ["./src/@schema"],
-      "app/store": ["./src/app/store/index"],
-      "app/store/*": ["./src/app/store/*"],
-      "app/shared-components/*": ["./src/app/shared-components/*"],
-      "app/configs/*": ["./src/app/configs/*"],
-      "app/theme-layouts/*": ["./src/app/theme-layouts/*"],
-      "app/AppContext": ["./src/app/AppContext"]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./src",
+        //"strict": true,
+        "outDir": "./build/out-tsc",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "declaration": false,
+        "experimentalDecorators": true,
+        "moduleResolution": "bundler",
+        "importHelpers": true,
+        "target": "ES2022",
+        "module": "ES2022",
+        "useDefineForClassFields": false,
+        "lib": ["ES2022", "dom"]
     },
-    "declaration": true,
-    "target": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2020",
-      "scripthost"
-    ],
-    "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "es2022",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src",
-    "tailwind.config.js",
-    "vite.config.mts",
-    "vite-env.d.ts"
-  ],
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false
+    }
 }
