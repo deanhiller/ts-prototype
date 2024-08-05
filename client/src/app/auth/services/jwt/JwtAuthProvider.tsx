@@ -6,6 +6,7 @@ import { UserData } from '../../user';
 import config from './jwtAuthConfig';
 import { baseClient } from 'src/clients/base/baseClient'
 import { LoginRequest, User } from 'src/apis/base/base';
+import {showMessage} from "@fuse/core/FuseMessage/fuseMessageSlice";
 
 export type JwtAuthStatus = 'configuring' | 'authenticated' | 'unauthenticated';
 
@@ -233,19 +234,27 @@ function JwtAuthProvider(props: JwtAuthProviderProps) {
 				}
 			}
 
-			const response: AxiosResponse<{ user: UserData; access_token: string }> = await axios.post(url, data);
-			const userData = response?.data?.user;
-			const accessToken = response?.data?.access_token;
-
-			console.log("their userData="+JSON.stringify(userData, null, 2));
 			console.log("our userData="+JSON.stringify(resultUserData, null, 2));
-			handleSuccess(resultUserData, accessToken);
+			handleSuccess(resultUserData, result.accessToken);
 
 			return resultUserData;
 		} catch (error) {
+			console.log("we are after error");
 			const axiosError = error as AxiosError;
 
 			handleFailure(axiosError);
+
+			console.log("show msg error");
+
+			showMessage({
+				message     : 'Hi, how are you?',//text or html
+				autoHideDuration: 6000,//ms
+				anchorOrigin: {
+					vertical  : 'top',//top bottom
+					horizontal: 'right'//left center right
+				},
+				variant: 'success'//success error info warning null
+			})
 
 			return axiosError;
 		}

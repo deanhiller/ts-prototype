@@ -3,6 +3,7 @@
     //ugh, this should be src and all ./src should be stripped in all *.ts files and
     //below in the paths as well...
     "baseUrl": "./",
+    "sourceMap": true,
     "paths": {
       "@fuse/*": ["./src/@fuse/*"],
       "@history*": ["./src/@history"],

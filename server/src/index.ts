@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import path from "path";

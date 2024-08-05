@@ -2,6 +2,7 @@
 export class LoginResponse {
     public loginSuccess?: boolean;
     public user?: User;
+    public accessToken?: string;
 }
 
 export class LoginRequest {

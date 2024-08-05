@@ -38,14 +38,18 @@ export async function translateOrReturn(res:Response, handler: RequestHandler): 
     } catch (error) {
         if(error instanceof HttpError) {
             return processError(res, error);
-        } else {
+        } else if(error instanceof Error) {
             console.error("Error on server:" + error);
-            const theObj = new ProtocolError();
-            theObj.message = "Internal Server Error";
-            const body = JSON.stringify(theObj);
-            // Handle any errors thrown by the handler
-            res.status(500).send(body);
-            return res;
+            console.error("Stack:"+error.stack);
+        } else {
+            console.error("Something is throwing an error that is not a subclass of Error!!! ahhhh!!! msg="+error);
         }
+
+        const theObj = new ProtocolError();
+        theObj.message = "Internal Server Error";
+        const body = JSON.stringify(theObj);
+        // Handle any errors thrown by the handler
+        res.status(500).send(body);
+        return res;
     }
 }
