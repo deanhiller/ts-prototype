@@ -36,7 +36,7 @@ const users = [
         role: "admin",
         photoUrl: "assets/images/avatars/brian-hughes.jpg",
         name: 'Someone',
-        email: 'admin@fusetheme.com',
+        email: 'hughes.brian@company.com',
         password: 'admin'
     }
 ];

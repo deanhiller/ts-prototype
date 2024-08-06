@@ -3,27 +3,16 @@ import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import {BaseClient} from "../../../clients/base/baseClient";
+import {BaseApi, LoginRequest, LoginResponse} from "../../../apis/base/base";
+import {SingleModel} from "../data/singleModel";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Setter & getter for access token
-     */
-    set accessToken(token: string) {
-        localStorage.setItem('accessToken', token);
-    }
-
-    get accessToken(): string {
-        return localStorage.getItem('accessToken') ?? '';
-    }
+    private _baseClient: BaseApi = inject(BaseClient);
+    private _singleModel = inject(SingleModel);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -52,27 +41,28 @@ export class AuthService {
      *
      * @param credentials
      */
-    signIn(credentials: { email: string; password: string }): Observable<any> {
+    async signIn(credentials: { email: string; password: string }): Promise<LoginResponse> {
         // Throw error, if the user is already logged in
-        if (this._authenticated) {
-            return throwError('User is already logged in.');
+        if (this._singleModel._authenticated) {
+            throw Error('User is already logged in');
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
-            switchMap((response: any) => {
-                // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+        const loginReq = new LoginRequest();
+        loginReq.name = credentials.email;
+        loginReq.password = credentials.password;
 
-                // Set the authenticated flag to true
-                this._authenticated = true;
+        const loginResponse = await this._baseClient.login(loginReq);
+        // Store the access token in the local storage
+        this._singleModel.accessToken = loginResponse.accessToken;
 
-                // Store the user on the user service
-                this._userService.user = response.user;
+        // Set the authenticated flag to true
+        this._singleModel._authenticated = true;
 
-                // Return a new observable with the response
-                return of(response);
-            })
-        );
+        // Store the user on the user service
+        //this._userService.user = response.user;
+        console.log("our loginResponse="+JSON.stringify(loginResponse));
+
+        return loginResponse;
     }
 
     /**
@@ -82,7 +72,7 @@ export class AuthService {
         // Sign in using the token
         return this._httpClient
             .post('api/auth/sign-in-with-token', {
-                accessToken: this.accessToken,
+                accessToken: this._singleModel.accessToken,
             })
             .pipe(
                 catchError(() =>
@@ -98,11 +88,11 @@ export class AuthService {
                     // side and attach it to the response object. Then the following
                     // piece of code can replace the token with the refreshed one.
                     if (response.accessToken) {
-                        this.accessToken = response.accessToken;
+                        this._singleModel.accessToken = response.accessToken;
                     }
 
                     // Set the authenticated flag to true
-                    this._authenticated = true;
+                    this._singleModel._authenticated = true;
 
                     // Store the user on the user service
                     this._userService.user = response.user;
@@ -121,7 +111,7 @@ export class AuthService {
         localStorage.removeItem('accessToken');
 
         // Set the authenticated flag to false
-        this._authenticated = false;
+        this._singleModel._authenticated = false;
 
         // Return the observable
         return of(true);
@@ -158,17 +148,17 @@ export class AuthService {
      */
     check(): Observable<boolean> {
         // Check if the user is logged in
-        if (this._authenticated) {
+        if (this._singleModel._authenticated) {
             return of(true);
         }
 
         // Check the access token availability
-        if (!this.accessToken) {
+        if (!this._singleModel.accessToken) {
             return of(false);
         }
 
         // Check the access token expire date
-        if (AuthUtils.isTokenExpired(this.accessToken)) {
+        if (AuthUtils.isTokenExpired(this._singleModel.accessToken)) {
             return of(false);
         }
 

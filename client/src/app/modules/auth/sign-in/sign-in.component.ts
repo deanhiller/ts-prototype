@@ -83,7 +83,7 @@ export class AuthSignInComponent implements OnInit {
     /**
      * Sign in
      */
-    signIn(): void {
+    async signIn(): Promise<void> {
         // Return if the form is invalid
         if (this.signInForm.invalid) {
             return;
@@ -95,43 +95,39 @@ export class AuthSignInComponent implements OnInit {
         // Hide the alert
         this.showAlert = false;
 
-        const obs = this._authService.signIn(this.signInForm.value);
+        try {
+            const loginResponse = await this._authService.signIn(this.signInForm.value);
+            console.log("success resp");
+            // Set the redirect url.
+            // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
+            // to the correct page after a successful sign in. This way, that url can be set via
+            // routing file and we don't have to touch here.
+            const redirectURL =
+                this._activatedRoute.snapshot.queryParamMap.get(
+                    'redirectURL'
+                ) || '/signed-in-redirect';
 
-        // Sign in
+            // Navigate to the redirect url
+            this._router.navigateByUrl(redirectURL);
+        } catch (e) {
+            //TODO: need to really differentiate between errors here
 
-        let scopedThis = this
-        obs.subscribe({
-            next(value) {
-                console.log("we see this");
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
-                const redirectURL =
-                    scopedThis._activatedRoute.snapshot.queryParamMap.get(
-                        'redirectURL'
-                    ) || '/signed-in-redirect';
 
-                // Navigate to the redirect url
-                scopedThis._router.navigateByUrl(redirectURL);
-            },
-            error(err) {
-                console.log("we see error22");
-                // Re-enable the form
-                scopedThis.signInForm.enable();
+            console.log("we see error22");
+            // Re-enable the form
+            this.signInForm.enable();
 
-                // Reset the form
-                scopedThis.signInNgForm.resetForm();
+            // Reset the form
+            this.signInNgForm.resetForm();
 
-                // Set the alert
-                scopedThis.alert = {
-                    type: 'error',
-                    message: 'Wrong email or password',
-                };
+            // Set the alert
+            this.alert = {
+                type: 'error',
+                message: 'Wrong email or password',
+            };
 
-                // Show the alert
-                scopedThis.showAlert = true;
-            }
-        });
+            // Show the alert
+            this.showAlert = true;
+        }
     }
 }

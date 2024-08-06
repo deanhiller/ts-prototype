@@ -1,9 +1,10 @@
 import {BaseApi, LoginRequest, LoginResponse} from "apis/base/base";
 import {BadRequestError, InternalServerError, ProtocolError, UnauthorizedError} from "../../apis/util/apiUtils";
+import {Injectable} from "@angular/core";
 
 const baseUrl = 'http://localhost:8080';
 
-
+@Injectable({ providedIn: 'root' })
 export class BaseClient implements BaseApi {
     async login(loginRequest: LoginRequest): Promise<LoginResponse> {
       const url = baseUrl+"/login";
