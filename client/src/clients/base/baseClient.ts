@@ -7,6 +7,11 @@ const baseUrl = 'http://localhost:8080';
 @Injectable({ providedIn: 'root' })
 export class BaseClient implements BaseApi {
     async login(loginRequest: LoginRequest): Promise<LoginResponse> {
+
+        if(true)
+            throw new Error("Simulate a bug to test typescript stack trace");
+
+
       const url = baseUrl+"/login";
       const res = await fetch(url, {
         method: 'Post',
