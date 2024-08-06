@@ -95,37 +95,43 @@ export class AuthSignInComponent implements OnInit {
         // Hide the alert
         this.showAlert = false;
 
+        const obs = this._authService.signIn(this.signInForm.value);
+
         // Sign in
-        this._authService.signIn(this.signInForm.value).subscribe(
-            () => {
+
+        let scopedThis = this
+        obs.subscribe({
+            next(value) {
+                console.log("we see this");
                 // Set the redirect url.
                 // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
                 // to the correct page after a successful sign in. This way, that url can be set via
                 // routing file and we don't have to touch here.
                 const redirectURL =
-                    this._activatedRoute.snapshot.queryParamMap.get(
+                    scopedThis._activatedRoute.snapshot.queryParamMap.get(
                         'redirectURL'
                     ) || '/signed-in-redirect';
 
                 // Navigate to the redirect url
-                this._router.navigateByUrl(redirectURL);
+                scopedThis._router.navigateByUrl(redirectURL);
             },
-            (response) => {
+            error(err) {
+                console.log("we see error22");
                 // Re-enable the form
-                this.signInForm.enable();
+                scopedThis.signInForm.enable();
 
                 // Reset the form
-                this.signInNgForm.resetForm();
+                scopedThis.signInNgForm.resetForm();
 
                 // Set the alert
-                this.alert = {
+                scopedThis.alert = {
                     type: 'error',
                     message: 'Wrong email or password',
                 };
 
                 // Show the alert
-                this.showAlert = true;
+                scopedThis.showAlert = true;
             }
-        );
+        });
     }
 }
