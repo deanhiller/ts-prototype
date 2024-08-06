@@ -17,6 +17,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import {HttpError, UnauthorizedError} from "../../../../apis/util/apiUtils";
 
 @Component({
     selector: 'auth-sign-in',
@@ -96,7 +97,7 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = false;
 
         try {
-            const loginResponse = await this._authService.signIn(this.signInForm.value);
+            await this._authService.signIn(this.signInForm.value);
             console.log("success resp");
             // Set the redirect url.
             // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
@@ -110,21 +111,48 @@ export class AuthSignInComponent implements OnInit {
             // Navigate to the redirect url
             this._router.navigateByUrl(redirectURL);
         } catch (e) {
-            //TODO: need to really differentiate between errors here
-
-
             console.log("we see error22");
             // Re-enable the form
             this.signInForm.enable();
 
-            // Reset the form
-            this.signInNgForm.resetForm();
+            if(e instanceof Error) {
+                console.error("Error type="+e);
+                console.error("Stacktrace="+e.stack);
+            } else {
+                console.error("Someone throwing a bad error type="+e);
+            }
 
-            // Set the alert
-            this.alert = {
-                type: 'error',
-                message: 'Wrong email or password',
-            };
+
+            //TODO: need to really differentiate between errors here
+            if(e instanceof UnauthorizedError) {
+                // Reset the form
+                this.signInNgForm.resetForm();
+                // Set the alert
+                this.alert = {
+                    type: 'error',
+                    message: 'Wrong email or password',
+                };
+            } else if(e instanceof HttpError) {
+                this.alert = {
+                    type: 'error',
+                    message: 'You have encountered a server bug.',
+                };
+            } else if(e instanceof TypeError && e.message === "Failed to fetch") {
+
+                this.alert = {
+                    type: 'error',
+                    message: 'Please check your network connection',
+                };
+            } else {
+
+            }
+
+
+
+
+
+
+
 
             // Show the alert
             this.showAlert = true;

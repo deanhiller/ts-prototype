@@ -34,7 +34,7 @@ const users = [
     {
         id: 3,
         role: "admin",
-        photoUrl: "assets/images/avatars/brian-hughes.jpg",
+        photoUrl: "images/avatars/brian-hughes.jpg",
         name: 'Someone',
         email: 'hughes.brian@company.com',
         password: 'admin'

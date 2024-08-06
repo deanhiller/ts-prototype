@@ -6,6 +6,7 @@ import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 import {BaseClient} from "../../../clients/base/baseClient";
 import {BaseApi, LoginRequest, LoginResponse} from "../../../apis/base/base";
 import {SingleModel} from "../data/singleModel";
+import {UserData} from "../user/user.types";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -58,8 +59,17 @@ export class AuthService {
         // Set the authenticated flag to true
         this._singleModel._authenticated = true;
 
+
+        const userData: UserData = {
+            id: loginResponse.user.email,
+            email: loginResponse.user.email,
+            name: loginResponse.user.displayName,
+            avatar: loginResponse.user.photoUrl,
+            status: "online"
+        }
         // Store the user on the user service
-        //this._userService.user = response.user;
+        this._userService.user = userData;
+
         console.log("our loginResponse="+JSON.stringify(loginResponse));
 
         return loginResponse;
