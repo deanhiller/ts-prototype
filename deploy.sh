@@ -12,3 +12,9 @@ docker buildx build -t us-central1-docker.pkg.dev/biltup-community/biltup-repo/p
 ####docker tag ${hashOfBuiltImage} us-central1-docker.pkg.dev/biltup-community/biltup-repo/prototype-image:${TAG}
 
 docker push us-central1-docker.pkg.dev/biltup-community/biltup-repo/prototype-image:${TAG}
+
+gcloud run deploy bltup-service \
+  --image us-central1-docker.pkg.dev/biltup-community/biltup-repo/prototype-image:${TAG} \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated
