@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /.yarn
+.angular
 
 # testing
 /coverage
