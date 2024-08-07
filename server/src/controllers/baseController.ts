@@ -1,8 +1,7 @@
-import 'source-map-support/register';
 import "reflect-metadata";
+import 'source-map-support/register';
 import {inject, injectable} from "inversify";
 import {BaseApi, LoginRequest, LoginResponse, User} from "../apis/base/base";
-import {TYPES} from "../types";
 import {BaseBusinessLogic} from "./baseBusinessLogic";
 import {RemoteApi} from "../apis/remote/remote";
 import {provideSingleton} from "../util/decorators";
@@ -10,6 +9,7 @@ import {BadRequestError, UnauthorizedError} from "../apis/util/apiUtils";
 import Base64 from 'crypto-js/enc-base64';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 import Utf8 from 'crypto-js/enc-utf8';
+import {TYPES} from "../types";
 
 const jwtSecret = 'l1kj3jsad!#$%sakldjwlqekjsadflhvcxzowie3';
 

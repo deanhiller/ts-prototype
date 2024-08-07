@@ -1,7 +1,7 @@
 // file types.ts
 const TYPES = {
-    BaseBusinessLogic: Symbol.for("BaseBusinessLogic"),
-    BaseController: Symbol.for("BaseController"),
+    App: Symbol.for("App"),
+    Express: Symbol.for("Express"),
     RemoteApi: Symbol.for("RemoteApi"),
     PrismaClient: Symbol.for("PrismaClient")
 };

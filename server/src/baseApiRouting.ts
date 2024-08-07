@@ -1,21 +1,38 @@
+import "reflect-metadata";
+
 import {BaseController} from "./controllers/baseController";
-import express, { Express, Request, Response } from "express";
+import { Express, Request, Response } from "express";
 import {LoginRequest, User} from "./apis/base/base";
-import {translateOrReturn} from "./util/decorators";
+import {provideSingleton, translateOrReturn} from "./util/decorators";
+import {inject} from "inversify";
+import {TYPES} from "./types";
 
-export function setupBaseController(app: Express, baseController: BaseController) {
+@provideSingleton(BaseApiRouting)
+export class BaseApiRouting {
+    private _baseController: BaseController;
+    private app: Express;
+
+    public constructor(
+        @inject(TYPES.Express) app: Express,
+        baseController: BaseController
+    ) {
+        this.app = app;
+        this._baseController = baseController;
+    }
+
+
+    setupBaseController() {
 // route login
-    app.post('/login', async (req: Request, res: Response) => {
-        return translateOrReturn(res, async () => {
-            console.log("log stuff");
-            const loginReq: LoginRequest = Object.assign(new LoginRequest(), req.body);
-            const result = await baseController.login(loginReq);
-            const body = JSON.stringify(result);
-            return res.status(200).send(body);
+        this.app.post('/login', async (req: Request, res: Response) => {
+            return translateOrReturn(res, async () => {
+                console.log("log stuff");
+                const loginReq: LoginRequest = Object.assign(new LoginRequest(), req.body);
+                const result = await this._baseController.login(loginReq);
+                const body = JSON.stringify(result);
+                return res.status(200).send(body);
+            });
         });
-    });
 
 
-
-
+    }
 }

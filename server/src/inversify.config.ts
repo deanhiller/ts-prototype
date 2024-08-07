@@ -5,9 +5,12 @@ import { provide, buildProviderModule } from "inversify-binding-decorators";
 import {BaseController} from "./controllers/baseController";
 import {FakeRemoteApi} from "./controllers/fakeRemoteApi";
 import {RemoteApi} from "./apis/remote/remote";
+import {App} from "./app";
+import { Express } from "express";
 
-const myContainer = new Container();
-myContainer.load(buildProviderModule());
+export function fetchMyContainer(express:Express): Container {
+    const myContainer = new Container();
+    myContainer.load(buildProviderModule());
 
 //did not work.  used workaround of PrismaClientFactory instead..
 // //these 3 lines to bind prisma client
@@ -16,8 +19,9 @@ myContainer.load(buildProviderModule());
 // // @ts-ignore
 // myContainer.bind<PrismaClient>(TYPES.PrismaClient).to(prisma).inSingletonScope();
 
+    myContainer.bind<Express>(TYPES.Express).toConstantValue(express);
+    myContainer.bind<App>(TYPES.App).to(App).inSingletonScope();
+    myContainer.bind<RemoteApi>(TYPES.RemoteApi).to(FakeRemoteApi).inSingletonScope();
 
-myContainer.bind<BaseController>(TYPES.BaseController).to(BaseController).inSingletonScope();
-myContainer.bind<RemoteApi>(TYPES.RemoteApi).to(FakeRemoteApi).inSingletonScope();
-
-export { myContainer };
+    return myContainer;
+}

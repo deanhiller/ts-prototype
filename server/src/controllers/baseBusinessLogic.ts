@@ -15,7 +15,7 @@ class BaseBusinessLogic {
 
     public async sneak(): Promise<string> {
 
-        const allUsers = await this.prisma.user.findMany()
+        const allUsers = await this.prisma.userDbo.findMany()
         console.log(allUsers)
 
         return "deano"

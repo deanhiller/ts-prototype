@@ -1,13 +1,11 @@
 import 'source-map-support/register';
 
 import dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
-import path from "path";
+import express, { Express } from "express";
 import cors from "cors";
-import {myContainer} from "./inversify.config";
-import {BaseController} from "./controllers/baseController";
+import {fetchMyContainer} from "./inversify.config";
 import {TYPES} from "./types";
-import {setupBaseController} from "./baseApiRouting"
+import {App} from "./app";
 
 dotenv.config();
 
@@ -16,20 +14,19 @@ const app: Express = express();
 app.use(express.json());
 app.use(cors());
 
-const baseController = myContainer.get<BaseController>(TYPES.BaseController);
-setupBaseController(app, baseController)
+const myContainer = fetchMyContainer(app);
+const myApp = myContainer.get<App>(TYPES.App);
+const promise = myApp.start();
 
-console.log(`dir:${__dirname}`);
+console.log("Checking database");
 
-//build/fuse/browser/
-app.use(express.static("${__dirname}/../../client/build/fuse/browser"));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "..", "client", "build", "fuse", "browser", "index.html"));
-});
+promise.then( () => {
+  console.log(`dir:${__dirname}`);
 
-const port = process.env.PORT || 8080;
+  const port = process.env.PORT || 8080;
 
-console.log(`About to listen on port ${port}`);
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`About to listen on port ${port}`);
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  });
 });
