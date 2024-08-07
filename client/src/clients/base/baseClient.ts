@@ -1,8 +1,15 @@
 import {BaseApi, LoginRequest, LoginResponse} from "apis/base/base";
 import {BadRequestError, InternalServerError, ProtocolError, UnauthorizedError} from "../../apis/util/apiUtils";
 import {Injectable} from "@angular/core";
+import { isDevMode } from '@angular/core';
 
-const baseUrl = 'http://localhost:8080';
+let baseUrl = '';
+if(isDevMode()) {
+    console.log("Development mode");
+    baseUrl = 'http://localhost:8080';
+} else {
+    console.log("Production mode");
+}
 
 @Injectable({ providedIn: 'root' })
 export class BaseClient implements BaseApi {
