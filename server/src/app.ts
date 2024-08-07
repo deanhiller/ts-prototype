@@ -33,7 +33,9 @@ export class App {
         this._app.get("*", (req, res) => {
             res.sendFile(path.resolve(__dirname, "..", "..", "client", "build", "fuse", "browser", "index.html"));
         });
+    }
 
+    async setupDatabase(): Promise<void> {
         return this._bootstrap.setup();
     }
 }

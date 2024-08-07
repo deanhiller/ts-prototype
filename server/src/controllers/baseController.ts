@@ -10,75 +10,68 @@ import Base64 from 'crypto-js/enc-base64';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 import Utf8 from 'crypto-js/enc-utf8';
 import {TYPES} from "../types";
+import {PrismaClient, RoleDbo, UserDbo} from "@prisma/client";
+import {UserWithPosts} from "../db/model";
+import * as CryptoJS from 'crypto-js';
 
 const jwtSecret = 'l1kj3jsad!#$%sakldjwlqekjsadflhvcxzowie3';
 
-// Array of example users for testing purposes
-const users = [
-    {
-        id: 1,
-        role: "admin",
-        photoUrl: "assets/images/avatars/brian-hughes.jpg",
-        name: 'Maria Doe',
-        email: 'maria@example.com',
-        password: 'maria123'
-    },
-    {
-        id: 2,
-        role: "admin",
-        photoUrl: "assets/images/avatars/brian-hughes.jpg",
-        name: 'Juan Doe',
-        email: 'juan@example.com',
-        password: 'juan123'
-    },
-    {
-        id: 3,
-        role: "admin",
-        photoUrl: "images/avatars/brian-hughes.jpg",
-        name: 'Someone',
-        email: 'hughes.brian@company.com',
-        password: 'admin'
-    }
-];
-
-function throwError<T>(msg: string, field: string) {
+function throwError<T>(msg: string, field: string): string {
     throw new BadRequestError(msg, field);
 }
 
 @provideSingleton(BaseController)
 export class BaseController implements BaseApi {
     private _baseBizLogic: BaseBusinessLogic;
+    private _prisma: PrismaClient;
 
     public constructor(
+        @inject(TYPES.PrismaClient) prisma: PrismaClient,
         baseBizLogic: BaseBusinessLogic,
         @inject(TYPES.RemoteApi) remoteApi: RemoteApi
     ) {
+        this._prisma = prisma;
         this._baseBizLogic = baseBizLogic;
     }
 
     async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-        const result = await this._baseBizLogic.sneak();
-        console.log(result);
 
         const email = loginRequest.name ?? throwError<string>("email is required", "email");
         const password = loginRequest.password ?? throwError<string>("password is required", "password");
 
-        const user = users.find(user => {
-            return user.email === email && user.password === password
+        const userDbo: UserWithPosts | null = await this._prisma.userDbo.findUnique({
+            where: {
+                email: email
+            },
+            include: {
+                user_roles: {
+                    include: {
+                        user: true
+                    },
+                },
+            },
         });
 
+        const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+
         const response = new LoginResponse();
-        if (!user) {
+        if(!userDbo || userDbo.hashedPassword != hashedPassword) {
             throw new UnauthorizedError("User/password is not found");
         }
 
-        const accessToken = this.generateJWTToken({ id: user.email });
+        const accessToken = this.generateJWTToken({ id: email });
+
+        const userRoles = userDbo.user_roles;
+        if(userRoles.length != 1)
+            throw new Error("User has wrong length of user roles="+userRoles.length);
+
+        const role1: RoleDbo = userRoles[0];
 
         response.user = new User();
-        response.user.email = user.email;
-        response.user.displayName = user.name;
-        response.user.role = user.role;
-        response.user.photoUrl = user.photoUrl;
+        response.user.email = userDbo.email;
+        response.user.displayName = userDbo.name !== null ? userDbo.name : undefined;
+        response.user.role = role1.name;
+        response.user.photoUrl = userDbo.photoUrl !== null ? userDbo.photoUrl : undefined;
         response.accessToken = accessToken;
 
         response.loginSuccess = true;

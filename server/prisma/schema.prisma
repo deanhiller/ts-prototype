@@ -36,11 +36,24 @@ model ProfileDbo {
 }
 
 model UserDbo {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   PostDbo[]
-  profile ProfileDbo?
+  id                Int      @id @default(autoincrement())
+  email             String   @unique
+  name              String?
+  hashedPassword    String
+  photoUrl          String?
+  posts             PostDbo[]
+  profile           ProfileDbo?
+  user_roles        RoleDbo[]
 
   @@map("users")
+}
+
+model RoleDbo {
+  id                Int      @id @default(autoincrement())
+  //values of nme should be constrained in an enum in the code(then a simple deploy can add the new role
+  //AND a deploy is needed to use the new role anyways)
+  name              String
+  user              UserDbo     @relation(fields: [user_id], references: [id])
+  user_id           Int
+  @@map("roles")
 }

@@ -15,12 +15,12 @@ export function processError(res: Response, error: HttpError) {
     theObj.name = error.name;
 
     if (error instanceof BadRequestError) {
-        console.error("Bad Request:", error.message);
+        console.log("Bad Request:", error.message);
         // Handle bad request error
         theObj.message = error.message;
         theObj.field = error.field;
     } else if (error instanceof UnauthorizedError) {
-        console.error("Unauthorized:", error.message);
+        console.log("Unauthorized:", error.message);
         // Handle unauthorized error
         theObj.message = error.message;
     }
@@ -40,7 +40,7 @@ export async function translateOrReturn(res:Response, handler: RequestHandler): 
             return processError(res, error);
         } else if(error instanceof Error) {
             console.error("Error on server:" + error);
-            console.error("Stack:"+error.stack);
+            console.error("Chokepoint. Stack:"+error.stack);
         } else {
             console.error("Something is throwing an error that is not a subclass of Error!!! ahhhh!!! msg="+error);
         }

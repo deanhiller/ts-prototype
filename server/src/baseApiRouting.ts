@@ -20,19 +20,16 @@ export class BaseApiRouting {
         this._baseController = baseController;
     }
 
-
     setupBaseController() {
 // route login
         this.app.post('/login', async (req: Request, res: Response) => {
             return translateOrReturn(res, async () => {
-                console.log("log stuff");
                 const loginReq: LoginRequest = Object.assign(new LoginRequest(), req.body);
                 const result = await this._baseController.login(loginReq);
                 const body = JSON.stringify(result);
                 return res.status(200).send(body);
             });
         });
-
 
     }
 }

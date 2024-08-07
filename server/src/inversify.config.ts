@@ -7,8 +7,9 @@ import {FakeRemoteApi} from "./controllers/fakeRemoteApi";
 import {RemoteApi} from "./apis/remote/remote";
 import {App} from "./app";
 import { Express } from "express";
+import {PrismaClient} from "@prisma/client";
 
-export function fetchMyContainer(express:Express): Container {
+export function fetchMyContainer(express:Express|null): Container {
     const myContainer = new Container();
     myContainer.load(buildProviderModule());
 
@@ -19,7 +20,13 @@ export function fetchMyContainer(express:Express): Container {
 // // @ts-ignore
 // myContainer.bind<PrismaClient>(TYPES.PrismaClient).to(prisma).inSingletonScope();
 
-    myContainer.bind<Express>(TYPES.Express).toConstantValue(express);
+    const prismaClient = new PrismaClient();
+
+    if(express) {
+        myContainer.bind<Express>(TYPES.Express).toConstantValue(express);
+    }
+
+    myContainer.bind<PrismaClient>(TYPES.PrismaClient).toConstantValue(prismaClient);
     myContainer.bind<App>(TYPES.App).to(App).inSingletonScope();
     myContainer.bind<RemoteApi>(TYPES.RemoteApi).to(FakeRemoteApi).inSingletonScope();
 

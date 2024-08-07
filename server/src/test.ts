@@ -1,4 +1,4 @@
-import { myContainer } from "./inversify.config";
+import { fetchMyContainer } from "./inversify.config";
 import {injectable} from "inversify";
 import {LoginRequest} from "./apis/base/base";
 import {TYPES} from "./types";
@@ -11,6 +11,8 @@ class MockRemoteApi implements RemoteApi {
         throw new Error("Method not implemented.");
     }
 }
+
+const myContainer = fetchMyContainer(null);
 
 myContainer.unbind(TYPES.RemoteApi);
 myContainer.bind<RemoteApi>(TYPES.RemoteApi).to(MockRemoteApi);

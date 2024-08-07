@@ -1,16 +1,17 @@
 import "reflect-metadata";
 import { PrismaClient } from "@prisma/client";
-import { PrismaClientFactory } from "../util/prismaClientFactory"
 import {provideSingleton} from "../util/decorators";
+import {inject} from "inversify";
+import {TYPES} from "../types";
 
 @provideSingleton(BaseBusinessLogic)
 class BaseBusinessLogic {
     private prisma: PrismaClient;
 
     public constructor(
-        prismaFactory: PrismaClientFactory
+        @inject(TYPES.PrismaClient) prisma: PrismaClient
     ) {
-        this.prisma = prismaFactory.fetch();
+        this.prisma = prisma;
     }
 
     public async sneak(): Promise<string> {

@@ -14,19 +14,49 @@ const app: Express = express();
 app.use(express.json());
 app.use(cors());
 
+console.log("fetching container");
 const myContainer = fetchMyContainer(app);
 const myApp = myContainer.get<App>(TYPES.App);
-const promise = myApp.start();
 
-console.log("Checking database");
+async function setupDatabase(): Promise<void> {
+  try {
+    await myApp.setupDatabase();
+  } catch (error) {
+    if(error instanceof Error) {
+      console.error("Failure to setup DB but moving on.  stacktrace=" + error.stack);
+    } else {
+      console.error("Someone threw a bad object="+error);
+    }
+    console.log("Continuing on to start server without database");
+  }
+}
 
-promise.then( () => {
-  console.log(`dir:${__dirname}`);
+async function startServer(): Promise<void> {
+  try {
+    console.log("Starting server...");
+    await myApp.start();
 
-  const port = process.env.PORT || 8080;
+    await setupDatabase();
 
-  console.log(`About to listen on port ${port}`);
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  });
-});
+    console.log(`dir:${__dirname}`);
+
+    const port = process.env.PORT || 8080;
+
+    console.log(`About to listen on port ${port}`);
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}`)
+    });
+  } catch (error) {
+    if(error instanceof Error) {
+      console.error("Server failed to start.  stacktrace=" + error.stack);
+    } else {
+      console.error("Someone threw a bad object(server failed to start)="+error);
+    }
+  }
+}
+
+const promise = startServer();
+promise.catch((error) => {
+      console.error("App Failed to start");
+    }
+)

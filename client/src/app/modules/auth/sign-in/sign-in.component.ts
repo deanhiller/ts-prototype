@@ -69,7 +69,7 @@ export class AuthSignInComponent implements OnInit {
         // Create the form
         this.signInForm = this._formBuilder.group({
             email: [
-                'hughes.brian@company.com',
+                'dean@biltup.com',
                 [Validators.required, Validators.email],
             ],
             password: ['admin', Validators.required],
@@ -143,16 +143,17 @@ export class AuthSignInComponent implements OnInit {
                     type: 'error',
                     message: 'Please check your network connection',
                 };
+            } else if(e instanceof Error) {
+                this.alert = {
+                    type: 'error',
+                    message: 'You encountered a client bug',
+                };
             } else {
-
+                this.alert = {
+                    type: 'error',
+                    message: 'You encountered a bug(code: 4560)',
+                };
             }
-
-
-
-
-
-
-
 
             // Show the alert
             this.showAlert = true;
