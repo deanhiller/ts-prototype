@@ -15,8 +15,8 @@ if(isDevMode()) {
 export class BaseClient implements BaseApi {
     async login(loginRequest: LoginRequest): Promise<LoginResponse> {
 
-        // if(true)
-        //     throw new Error("Simulate a bug to test typescript stack trace");
+        if(true)
+            throw new Error("Simulate a bug to test typescript stack trace");
 
 
       const url = baseUrl+"/login";
