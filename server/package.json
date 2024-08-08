@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
+    "prismagen": "npx prisma generate",
     "start": "node build/index.js",
     "debug": "node --inspect build/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q build/index.js\"",

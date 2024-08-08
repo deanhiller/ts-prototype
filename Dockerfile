@@ -20,6 +20,7 @@ RUN echo "serverlist $(ls -la /home/node/app/server)"
 RUN echo "server $(ls -la /home/node/app/server/build)"
 
 RUN cd ./client && npm run build
+RUN cd ./server && npm run prismagen
 RUN cd ./server && npm run build
 
 RUN echo "serverlist2 $(ls -la /home/node/app/server)"
