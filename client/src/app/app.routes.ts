@@ -33,7 +33,8 @@ export const appRoutes: Route[] = [
             {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes')},
             {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes')},
             {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes')},
-            {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes')}
+            {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes')},
+            {path: 'choose', loadChildren: () => import('app/modules/auth/choose/choose.routes')}
         ]
     },
 
@@ -75,6 +76,12 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
+            {path: 'settings', loadChildren: () => import('app/modules/admin/settings/settings.routes')},
+
         ]
-    }
+    },
+
+    // 404 & Catch all
+    {path: '404-not-found', pathMatch: 'full', loadChildren: () => import('app/modules/admin/pages/error/error-404/error-404.routes')},
+    {path: '**', redirectTo: '404-not-found'}
 ];

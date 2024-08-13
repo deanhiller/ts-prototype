@@ -1,8 +1,17 @@
 #!/bin/bash
 
+set -o errexit
+
 export TAG=latest
 
-gcloud auth login
+# Check if any account with the domain @biltup.com is logged in
+if gcloud auth list --format="value(account)" | grep -q "@biltup.com"; then
+  echo "An account with @biltup.com domain is already logged in."
+else
+  echo "No @biltup.com account is logged in. Performing gcloud auth login..."
+  gcloud auth login
+fi
+
 gcloud config set project biltup-community
 gcloud auth configure-docker us-central1-docker.pkg.dev
 docker buildx build -t us-central1-docker.pkg.dev/biltup-community/biltup-repo/prototype-image:${TAG} .

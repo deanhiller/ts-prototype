@@ -1,6 +1,7 @@
 import {fluentProvide} from "inversify-binding-decorators";
 import {Request, Response} from "express";
 import {BadRequestError, HttpError, ProtocolError, UnauthorizedError} from "../apis/util/apiUtils";
+import Logger from "bunyan";
 
 export const provideSingleton = (identifier: any) => {
     return fluentProvide(identifier)
@@ -8,19 +9,19 @@ export const provideSingleton = (identifier: any) => {
         .done();
 };
 
-export type RequestHandler = () => Promise<Response>;
+export type RequestHandler<T> = () => Promise<T>;
 
-export function processError(res: Response, error: HttpError) {
+export function processError(log: Logger, res: Response, error: HttpError) {
     const theObj = new ProtocolError();
     theObj.name = error.name;
 
     if (error instanceof BadRequestError) {
-        console.log("Bad Request:", error.message);
+        log.info("Bad Request:", error.message);
         // Handle bad request error
         theObj.message = error.message;
         theObj.field = error.field;
     } else if (error instanceof UnauthorizedError) {
-        console.log("Unauthorized:", error.message);
+        log.info("Unauthorized:", error.message);
         // Handle unauthorized error
         theObj.message = error.message;
     }
@@ -30,19 +31,20 @@ export function processError(res: Response, error: HttpError) {
     return res.status(error.code).send(body);
 }
 
-export async function translateOrReturn(res:Response, handler: RequestHandler): Promise<Response> {
+export async function translateOrReturn<T>(log: Logger, res:Response, handler: RequestHandler<T>): Promise<Response> {
     try {
         // You can add pre-processing logic here
         const result = await handler();
-        return result;
+        const body = JSON.stringify(result);
+        return res.status(200).send(body);
     } catch (error) {
         if(error instanceof HttpError) {
-            return processError(res, error);
+            return processError(log, res, error);
         } else if(error instanceof Error) {
-            console.error("Error on server:" + error);
-            console.error("Chokepoint. Stack:"+error.stack);
+            log.error("Error on server:" + error);
+            log.error("Chokepoint. Stack:"+error.stack);
         } else {
-            console.error("Something is throwing an error that is not a subclass of Error!!! ahhhh!!! msg="+error);
+            log.error("Something is throwing an error that is not a subclass of Error!!! ahhhh!!! msg="+error);
         }
 
         const theObj = new ProtocolError();

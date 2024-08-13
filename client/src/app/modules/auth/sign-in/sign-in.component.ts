@@ -111,52 +111,25 @@ export class AuthSignInComponent implements OnInit {
             // Navigate to the redirect url
             this._router.navigateByUrl(redirectURL);
         } catch (e) {
-            console.log("we see error22");
+            console.log("we see error");
             // Re-enable the form
             this.signInForm.enable();
 
-            if(e instanceof Error) {
-                console.error("Error type="+e);
-                console.error("Stacktrace="+e.stack);
-            } else {
-                console.error("Someone throwing a bad error type="+e);
-            }
-
-
-            //TODO: need to really differentiate between errors here
             if(e instanceof UnauthorizedError) {
-                // Reset the form
-                this.signInNgForm.resetForm();
+                // Reset the password only
+                this.signInForm.controls['password'].reset();
+
                 // Set the alert
                 this.alert = {
                     type: 'error',
                     message: 'Wrong email or password',
                 };
-            } else if(e instanceof HttpError) {
-                this.alert = {
-                    type: 'error',
-                    message: 'You have encountered a server bug.',
-                };
-            } else if(e instanceof TypeError && e.message === "Failed to fetch") {
 
-                this.alert = {
-                    type: 'error',
-                    message: 'Please check your network connection',
-                };
-            } else if(e instanceof Error) {
-                this.alert = {
-                    type: 'error',
-                    message: 'You encountered a client bug',
-                };
+                // Show the alert
+                this.showAlert = true;
             } else {
-                this.alert = {
-                    type: 'error',
-                    message: 'You encountered a bug(code: 4560)',
-                };
+                throw e;
             }
-
-            // Show the alert
-            this.showAlert = true;
         }
     }
 }

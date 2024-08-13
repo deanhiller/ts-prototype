@@ -4,7 +4,7 @@ import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 import {BaseClient} from "../../../clients/base/baseClient";
-import {BaseApi, LoginRequest, LoginResponse} from "../../../apis/base/base";
+import {BaseApi, LoginRequest, LoginResponse, SignupRequest, SignupResponse} from "../../../apis/base/base";
 import {SingleModel} from "../data/singleModel";
 import {UserData} from "../user/user.types";
 
@@ -54,7 +54,7 @@ export class AuthService {
 
         const loginResponse = await this._baseClient.login(loginReq);
         // Store the access token in the local storage
-        this._singleModel.accessToken = loginResponse.accessToken;
+        this._singleModel.setAccessToken(loginResponse.accessToken);
 
         // Set the authenticated flag to true
         this._singleModel._authenticated = true;
@@ -82,7 +82,7 @@ export class AuthService {
         // Sign in using the token
         return this._httpClient
             .post('api/auth/sign-in-with-token', {
-                accessToken: this._singleModel.accessToken,
+                accessToken: this._singleModel.getAccessToken(),
             })
             .pipe(
                 catchError(() =>
@@ -98,7 +98,7 @@ export class AuthService {
                     // side and attach it to the response object. Then the following
                     // piece of code can replace the token with the refreshed one.
                     if (response.accessToken) {
-                        this._singleModel.accessToken = response.accessToken;
+                        this._singleModel.setAccessToken(response.accessToken);
                     }
 
                     // Set the authenticated flag to true
@@ -132,13 +132,19 @@ export class AuthService {
      *
      * @param user
      */
-    signUp(user: {
+    async signUp(user: {
         name: string;
         email: string;
         password: string;
         company: string;
-    }): Observable<any> {
-        return this._httpClient.post('api/auth/sign-up', user);
+    }, role: string): Promise<SignupResponse> {
+
+        const request = new SignupRequest();
+        request.email = user.email;
+        request.displayName = user.name;
+        request.password = user.password;
+        request.role = role;
+        return this._baseClient.signup(request);
     }
 
     /**
@@ -163,12 +169,12 @@ export class AuthService {
         }
 
         // Check the access token availability
-        if (!this._singleModel.accessToken) {
+        if (!this._singleModel.getAccessToken()) {
             return of(false);
         }
 
         // Check the access token expire date
-        if (AuthUtils.isTokenExpired(this._singleModel.accessToken)) {
+        if (AuthUtils.isTokenExpired(this._singleModel.getAccessToken())) {
             return of(false);
         }
 

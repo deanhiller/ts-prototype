@@ -13,7 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -46,6 +46,8 @@ export class AuthSignUpComponent implements OnInit {
     };
     signUpForm: UntypedFormGroup;
     showAlert: boolean = false;
+    checked: boolean = true;
+    private _role: string;
 
     /**
      * Constructor
@@ -53,7 +55,8 @@ export class AuthSignUpComponent implements OnInit {
     constructor(
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
-        private _router: Router
+        private _router: Router,
+        private _route: ActivatedRoute
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -64,6 +67,13 @@ export class AuthSignUpComponent implements OnInit {
      * On init
      */
     ngOnInit(): void {
+        const role = this._route.snapshot.paramMap.get('role')
+        if(!role || (role !== "customer" && role !== "teacher")) {
+            this._router.navigateByUrl('/404-not-found', { skipLocationChange: true })
+        }
+
+        this._role = role;
+
         // Create the form
         this.signUpForm = this._formBuilder.group({
             name: ['', Validators.required],
@@ -74,6 +84,8 @@ export class AuthSignUpComponent implements OnInit {
         });
     }
 
+
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -81,7 +93,7 @@ export class AuthSignUpComponent implements OnInit {
     /**
      * Sign up
      */
-    signUp(): void {
+    async signUp(): Promise<void> {
         // Do nothing if the form is invalid
         if (this.signUpForm.invalid) {
             return;
@@ -93,28 +105,29 @@ export class AuthSignUpComponent implements OnInit {
         // Hide the alert
         this.showAlert = false;
 
-        // Sign up
-        this._authService.signUp(this.signUpForm.value).subscribe(
-            (response) => {
-                // Navigate to the confirmation required page
+        try {
+            const response = await this._authService.signUp(this.signUpForm.value, this._role);
+            if (response.success) {
                 this._router.navigateByUrl('/confirmation-required');
-            },
-            (response) => {
+            } else {
                 // Re-enable the form
                 this.signUpForm.enable();
 
-                // Reset the form
-                this.signUpNgForm.resetForm();
+                //only erase password currently...
+                this.signUpForm.controls['password'].reset();
+                //this.signUpNgForm.reset();
 
                 // Set the alert
                 this.alert = {
                     type: 'error',
-                    message: 'Something went wrong, please try again.',
+                    message: response.errorMessage,
                 };
 
                 // Show the alert
                 this.showAlert = true;
             }
-        );
+        } finally {
+            this.signUpForm.enable();
+        }
     }
 }

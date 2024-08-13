@@ -67,6 +67,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
         private _fusePlatformService: FusePlatformService
     ) {}
 
+    throwNotFoundError(layout:string): void {
+        throw new Error(`template not found ${layout}`)
+    }
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------

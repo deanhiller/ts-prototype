@@ -29,5 +29,7 @@ EXPOSE 8080
 
 WORKDIR /home/node/app/server
 
+#Make sure we run in production mode..
+ENV NODE_ENV=production
 #node dist/index.js
 CMD [ "node", "build/index.js" ]

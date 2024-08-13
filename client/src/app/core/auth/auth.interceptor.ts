@@ -35,13 +35,13 @@ export const authInterceptor = (
     // catch and delete the access token from the local storage while logging
     // the user out from the app.
     if (
-        singleModel.accessToken &&
-        !AuthUtils.isTokenExpired(singleModel.accessToken)
+        singleModel.getAccessToken() &&
+        !AuthUtils.isTokenExpired(singleModel.getAccessToken())
     ) {
         newReq = req.clone({
             headers: req.headers.set(
                 'Authorization',
-                'Bearer ' + singleModel.accessToken
+                'Bearer ' + singleModel.getAccessToken()
             ),
         });
     }

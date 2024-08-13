@@ -17,9 +17,25 @@ export class User {
     public photoUrl?: string;
 }
 
+export class SignupRequest {
+    public displayName?: string;
+    public email?: string;
+    public password?: string;
+    public role?: string;
+
+}
+
+export class SignupResponse {
+    public success?: boolean;
+    public errorMessage?: string;
+    public accessToken?: string;
+}
+
 export interface BaseApi {
     //@Path("/login")
     login(loginRequest: LoginRequest): Promise<LoginResponse>;
+
+    signup(request: SignupRequest): Promise<SignupResponse>;
 
 }
 

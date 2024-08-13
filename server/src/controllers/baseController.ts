@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import 'source-map-support/register';
 import {inject, injectable} from "inversify";
-import {BaseApi, LoginRequest, LoginResponse, User} from "../apis/base/base";
+import {BaseApi, LoginRequest, LoginResponse, SignupRequest, SignupResponse, User} from "../apis/base/base";
 import {BaseBusinessLogic} from "./baseBusinessLogic";
 import {RemoteApi} from "../apis/remote/remote";
 import {provideSingleton} from "../util/decorators";
@@ -76,6 +76,55 @@ export class BaseController implements BaseApi {
 
         response.loginSuccess = true;
         return response;
+    }
+
+    async signup(request: SignupRequest): Promise<SignupResponse> {
+        const name = request.displayName ?? throwError<string>("name is required", "name");
+        const email = request.email ?? throwError<string>("email is required", "email");
+        const role = request.role ?? throwError<string>("role is required", "role");
+
+        const userDbo: UserDbo | null = await this._prisma.userDbo.findUnique({
+            where: {
+                email: request.email
+            }
+        });
+
+        const pw = request.password ?? throwError<string>("password is required", "password");
+        if(userDbo !== null) {
+            const resp = new SignupResponse();
+            resp.success = false;
+            resp.errorMessage = "User already exists";
+            return resp;
+        } else if(pw.length < 10) {
+            const resp = new SignupResponse();
+            resp.success = false;
+            resp.errorMessage = "Password must be at least 10 characters";
+            return resp;
+        }
+
+        const hashedPassword = CryptoJS.SHA256(pw).toString(CryptoJS.enc.Hex);
+
+        await this._prisma.userDbo.create({
+            data: {
+                email: email,
+                name: name,
+                hashedPassword: hashedPassword,
+                user_roles: {
+                    create: [
+                        {
+                            name: role
+                        }
+                    ]
+                }
+            }
+        });
+
+        const accessToken = this.generateJWTToken({ id: email });
+
+        const resp = new SignupResponse();
+        resp.success = true;
+        resp.accessToken = accessToken;
+        return resp;
     }
 
     base64url(source: CryptoJS.lib.WordArray) {

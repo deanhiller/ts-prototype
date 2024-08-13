@@ -16,11 +16,11 @@ export class SingleModel {
     /**
      * Setter & getter for access token
      */
-    set accessToken(token: string) {
+    setAccessToken(token: string) {
         localStorage.setItem('accessToken', token);
     }
 
-    get accessToken(): string {
+    getAccessToken(): string {
         return localStorage.getItem('accessToken') ?? '';
     }
 

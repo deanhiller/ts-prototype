@@ -68,6 +68,7 @@
                     <mat-label>Password</mat-label>
                     <input
                         id="password"
+                        name="password"
                         matInput
                         type="password"
                         [formControlName]="'password'"
@@ -113,6 +114,7 @@
                 <div class="mt-1.5 inline-flex w-full items-end">
                     <mat-checkbox
                         class="-ml-2"
+                        [(ngModel)]="checked"
                         [color]="'primary'"
                         [formControlName]="'agreements'"
                     >
